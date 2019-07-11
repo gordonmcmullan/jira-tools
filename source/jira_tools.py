@@ -11,10 +11,10 @@ class Config:
     """ Config - contains useful configuration settings """
     def __init__(self,
                  project,
-                 jira: JIRA = "http://localhost:2990/",
+                 jira_url: str,
                  weeks: int = 4):
         self.args = []
-        self.jira = jira
+        self.jira = JIRA(jira_url) if jira_url != "" else JIRA("http://localhost:2990/")
         self.project = project
         self.weeks = weeks
 
@@ -45,9 +45,6 @@ def main():
     parser = argument_parser()
     args = vars(parser.parse_args())
     config = Config(args['project'], args['jira'], args['weeks'])
-
-    if args['jira']:
-        config.jira = JIRA(args['jira'])
 
     print("Running jira-tools")
     action = globals()[args['action']]
