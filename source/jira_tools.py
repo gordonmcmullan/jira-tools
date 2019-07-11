@@ -10,12 +10,13 @@ from jira import JIRA
 class Config:
     """ Config - contains useful configuration settings """
     def __init__(self,
-                 project,
+                 project: str,
                  jira_url: str,
-                 weeks: int = 4):
+                 weeks: int = 4) -> None:
         self.args = []
         self.jira = JIRA(jira_url) if jira_url != "" else JIRA("http://localhost:2990/")
         self.project = project
+        assert(0 <= weeks <= 12)
         self.weeks = weeks
 
 
@@ -32,7 +33,7 @@ class Colour:
     END = '\033[0m'
 
 
-def number_to_text(number: int):
+def number_to_text(number: int) -> str:
     numbers = [
         "zero", "one", "two", "three", "four", "five", "six", "seven",
         "eight", "nine", "ten", "eleven", "twelve"
@@ -40,7 +41,7 @@ def number_to_text(number: int):
     return numbers[number]
 
 
-def main():
+def main() -> None:
     """ main thread """
     parser = argument_parser()
     args = vars(parser.parse_args())
@@ -96,7 +97,7 @@ def issue_history(config: Config) -> None:
                     )
 
 
-def weekly_throughput(config: Config):
+def weekly_throughput(config: Config) -> None:
     jira = config.jira
 
     issues = jira.search_issues(
@@ -148,7 +149,7 @@ def monte_carlo(config: Config) -> None:
         pass
 
 
-def argument_parser():
+def argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Provides some basic functionality to "
         "connect to Jira and extract "
