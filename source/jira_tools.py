@@ -8,8 +8,11 @@ from jira import JIRA
 
 
 class Config:
-    """ Config - contains useful cinfiguration settings """
-    def __init__(self, project, jira: JIRA = None, weeks: int = 4):
+    """ Config - contains useful configuration settings """
+    def __init__(self,
+                 project,
+                 jira: JIRA = "http://localhost:2990/",
+                 weeks: int = 4):
         self.args = []
         self.jira = jira
         self.project = project
@@ -29,7 +32,7 @@ class Colour:
     END = '\033[0m'
 
 
-def say_number(number: int): 
+def number_to_text(number: int):
     numbers = [
         "zero", "one", "two", "three", "four", "five", "six", "seven",
         "eight", "nine", "ten", "eleven", "twelve"
@@ -39,75 +42,16 @@ def say_number(number: int):
 
 def main():
     """ main thread """
-    parser = argparse.ArgumentParser(
-        description="Provides some basic functionality to "
-        "connect to Jira and extract "
-        "information for analysis of Jira project issues.\n\n"
-        "Reads connection credentials from the users .netrc which should "
-        "contain a machine entry like the following:"
-        "\n\n"
-        "\tmachine <jirahost>\n"
-        "\t  login <username>\n"
-        "\t  password <password>",
-        formatter_class=argparse.RawTextHelpFormatter,
-        add_help=False
-    )
-    
-    required_args = parser.add_argument_group('required arguments')
-    optional_args = parser.add_argument_group('optional arguments')
-
-    parser.add_argument(
-        "action",
-        default="text",
-        nargs="?",
-        help="Which action to perform:\n" +
-             Colour.BOLD + "\ntext" + Colour.END +
-             " export issues as plain text output to stdout (default)\n" +
-             Colour.BOLD + "issue_history" + Colour.END +
-             " export data to help forecast\n"
-    )
-
-    required_args.add_argument(
-        "-p",
-        "--project",
-        help="the jira project name"
-    )
-
-    optional_args.add_argument(
-        "-h",
-        "--help",
-        help="Print this message and exit\n\n",
-        action="help"
-    )
-
-    optional_args.add_argument(
-        "-j",
-        "--jira",
-        help="url of the JIRA instance to connect to,\n"
-             "defaults to \"http://localhost:2990/\"\n"
-             "which is the url used by the Development JIRA "
-             "from the Atlassian SDK\n\n",
-        required=False
-    )
-
-    optional_args.add_argument(
-        "-w",
-        "--weeks",
-        help="number of weeks to count back,\n"
-             "defaults to four weeks\n\n",
-        required=False,
-        type=int
-    )
-
+    parser = argument_parser()
     args = vars(parser.parse_args())
     config = Config(args['project'], args['jira'], args['weeks'])
 
     if args['jira']:
         config.jira = JIRA(args['jira'])
-    
+
     print("Running jira-tools")
     action = globals()[args['action']]
-    
+
     action(config)
 
     config.jira.close()
@@ -180,7 +124,7 @@ def weekly_throughput(config: Config):
         if week == 0:
             preamble = "Last week "
         else:
-            preamble = f"{say_number(week + 1).title()} weeks ago"
+            preamble = f"{number_to_text(week + 1).title()} weeks ago"
 
         issues = jira.search_issues(
             f"project={config.project} \
@@ -205,6 +149,71 @@ def monte_carlo(config: Config) -> None:
     for issue in issues:
         print(issue.key)
         pass
+
+
+def argument_parser():
+    parser = argparse.ArgumentParser(
+        description="Provides some basic functionality to "
+        "connect to Jira and extract "
+        "information for analysis of Jira project issues.\n\n"
+        "Reads connection credentials from the users .netrc which should "
+        "contain a machine entry like the following:"
+        "\n\n"
+        "\tmachine <jirahost>\n"
+        "\t  login <username>\n"
+        "\t  password <password>",
+        formatter_class=argparse.RawTextHelpFormatter,
+        add_help=False
+    )
+    
+    required_args = parser.add_argument_group('required arguments')
+    optional_args = parser.add_argument_group('optional arguments')
+
+    parser.add_argument(
+        "action",
+        default="text",
+        nargs="?",
+        help="Which action to perform:\n" +
+             Colour.BOLD + "\ntext" + Colour.END +
+             " export issues as plain text output to stdout (default)\n" +
+             Colour.BOLD + "issue_history" + Colour.END +
+             " export data to help forecast\n"
+    )
+
+    required_args.add_argument(
+        "-p",
+        "--project",
+        help="the jira project name"
+    )
+
+    optional_args.add_argument(
+        "-h",
+        "--help",
+        help="Print this message and exit\n\n",
+        action="help"
+    )
+
+    optional_args.add_argument(
+        "-j",
+        "--jira",
+        help="url of the JIRA instance to connect to,\n"
+             "defaults to \"http://localhost:2990/\"\n"
+             "which is the url used by the Development JIRA "
+             "from the Atlassian SDK\n\n",
+        required=False
+    )
+
+    optional_args.add_argument(
+        "-w",
+        "--weeks",
+        help="number of weeks to count back,\n"
+             "defaults to four weeks\n\n",
+        required=False,
+        type=int
+    )
+
+    return parser
+
 
 if __name__ == "__main__":
     main()
