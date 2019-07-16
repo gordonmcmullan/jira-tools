@@ -3,7 +3,6 @@ Some useful tools to interact with JIRA instances
 """
 import argparse
 import iso8601
-import json
 from jira import JIRA
 
 
@@ -14,9 +13,14 @@ class Config:
                  jira_url: str,
                  weeks: int = 4) -> None:
         self.args = []
-        self.jira = JIRA(jira_url) if jira_url != "" else JIRA("http://localhost:2990/")
+
+        if jira_url != "":
+            self.jira = JIRA(jira_url)
+        else:
+            self.jira = JIRA("http://localhost:2990/")
+
         self.project = project
-        assert(0 <= weeks <= 12)
+        assert 0 <= weeks <= 12
         self.weeks = weeks
 
 
@@ -109,11 +113,11 @@ def weekly_throughput(config: Config) -> None:
     print(f"Total stories completed to date: {issues.total}")
 
     issues = jira.search_issues(
-            f"project={config.project} \
-                AND issuetype in (Story, Task) \
-                AND status = Done \
-                AND resolutiondate >= startOfWeek()",
-            fields="summary"
+        f"project={config.project} \
+            AND issuetype in (Story, Task) \
+            AND status = Done \
+            AND resolutiondate >= startOfWeek()",
+        fields="summary"
         )
     print(f"Completed stories so far this week {issues.total}")
 
@@ -146,7 +150,6 @@ def monte_carlo(config: Config) -> None:
     )
     for issue in issues:
         print(issue.key)
-        pass
 
 
 def argument_parser() -> argparse.ArgumentParser:
@@ -163,7 +166,7 @@ def argument_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawTextHelpFormatter,
         add_help=False
     )
-    
+
     required_args = parser.add_argument_group('required arguments')
     optional_args = parser.add_argument_group('optional arguments')
 
@@ -172,10 +175,10 @@ def argument_parser() -> argparse.ArgumentParser:
         default="text",
         nargs="?",
         help="Which action to perform:\n" +
-             Colour.BOLD + "\ntext" + Colour.END +
-             " export issues as plain text output to stdout (default)\n" +
-             Colour.BOLD + "issue_history" + Colour.END +
-             " export data to help forecast\n"
+        Colour.BOLD + "\ntext" + Colour.END +
+        " export issues as plain text output to stdout (default)\n" +
+        Colour.BOLD + "issue_history" + Colour.END +
+        " export data to help forecast\n"
     )
 
     required_args.add_argument(
