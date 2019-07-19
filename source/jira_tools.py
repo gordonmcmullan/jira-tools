@@ -1,5 +1,5 @@
 """
-Some useful tools to interact with JIRA instances
+Some useful Commandline tools to interact with JIRA instances
 """
 import argparse
 import iso8601
@@ -25,6 +25,7 @@ class Config:
 
 
 class Colour:
+    """ Enumeration for modifying the colours used in the terminal output"""
     PURPLE = '\033[95m'
     CYAN = '\033[96m'
     DARKCYAN = '\033[36m'
@@ -41,7 +42,7 @@ def number_to_text(number: int) -> str:
     numbers = [
         "zero", "one", "two", "three", "four", "five", "six", "seven",
         "eight", "nine", "ten", "eleven", "twelve"
-        ]
+    ]
     return numbers[number]
 
 
@@ -86,19 +87,26 @@ def issue_history(config: Config) -> None:
         histories = issue.changelog.histories
         for history in histories:
             timestamp = iso8601.parse_date(history.created)
-            items = history.items
-            for item in items:
-                if item.field.lower() in ["status", "flagged"]:
-                    if item.toString == "":
-                        title = "Unflagged"
-                    else:
-                        title = item.field.title()
-                    print(
-                        "\t",
-                        timestamp.strftime('%d/%m/%Y %H:%M'),
-                        title,
-                        item.toString
-                    )
+            items = filter(is_transition, history.items)
+            print_transitions(items, timestamp)
+
+
+def print_transitions(items: list, timestamp: str) -> None:
+    for item in items:
+        if item.toString == "":
+            title = "Unflagged"
+        else:
+            title = item.field.title()
+        print(
+            "\t",
+            timestamp.strftime('%d/%m/%Y %H:%M'),
+            title,
+            item.toString
+        )
+
+
+def is_transition(item):
+    return item.field.lower() in ["status", "flagged"]
 
 
 def weekly_throughput(config: Config) -> None:
