@@ -11,17 +11,21 @@ class Config:
     def __init__(self,
                  project: str,
                  jira_url: str,
-                 weeks: int = 4) -> None:
+                 weeks: int) -> None:
         self.args = []
+
+        self.project = project
 
         if jira_url != "":
             self.jira = JIRA(jira_url)
         else:
             self.jira = JIRA("http://localhost:2990/")
 
-        self.project = project
-        assert 0 <= weeks <= 12
-        self.weeks = weeks
+        if weeks:
+            assert 0 <= weeks <= 12
+            self.weeks = weeks
+        else:
+            self.weeks = 4
 
 
 class Colour:
@@ -172,27 +176,29 @@ def argument_parser() -> argparse.ArgumentParser:
         "\t  login <username>\n"
         "\t  password <password>",
         formatter_class=argparse.RawTextHelpFormatter,
+        usage= "jira_tools.py action -p PROJECT [-j JIRA] [-w WEEKS]",
         add_help=False
     )
 
     required_args = parser.add_argument_group('required arguments')
     optional_args = parser.add_argument_group('optional arguments')
 
-    parser.add_argument(
+    required_args.add_argument(
         "action",
         default="text",
         nargs="?",
         help="Which action to perform:\n" +
-        Colour.BOLD + "\ntext" + Colour.END +
+        Colour.BOLD + "\nissue_history" + Colour.END +
         " export issues as plain text output to stdout (default)\n" +
-        Colour.BOLD + "issue_history" + Colour.END +
-        " export data to help forecast\n"
+        Colour.BOLD + "\nweekly_throughput" + Colour.END +
+        " export data to help forecast\n\n\n"
     )
 
     required_args.add_argument(
         "-p",
         "--project",
-        help="the jira project name"
+        help="the jira project name",
+        required=True
     )
 
     optional_args.add_argument(
