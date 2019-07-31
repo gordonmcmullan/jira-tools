@@ -2,6 +2,7 @@
 Some useful Commandline tools to interact with JIRA instances
 """
 import argparse
+import time
 import iso8601
 from jira import JIRA
 
@@ -72,8 +73,9 @@ def text(config: Config) -> None:
 def issue_history(config: Config) -> None:
     jira = config.jira
 
-    issues = jira.search_issues(
-        f"project={config.project} AND status=Done",
+    issues = get_issues_by_jql(
+        jira=jira,
+        jql=f"project={config.project} AND status=Done",
         fields="changelog, created, status, issuetype",
         expand="changelog"
     )
@@ -93,6 +95,22 @@ def issue_history(config: Config) -> None:
             timestamp = iso8601.parse_date(history.created)
             items = filter(is_transition, history.items)
             print_transitions(items, timestamp)
+
+
+def get_issues_by_jql(
+        jira: JIRA, jql: str, fields: str, expand: str) -> JIRA.issue:
+    start_at = 0
+    has_more = True
+    while has_more:
+        issues = jira.search_issues(
+            jql, startAt=start_at, fields=fields, expand=expand)
+        for issue in issues:
+            yield issue
+        start_at += len(issues)
+        if len(issues) < issues.maxResults:
+            has_more = False
+        else:
+            time.sleep(1)  # play nicely with API
 
 
 def print_transitions(items: list, timestamp: str) -> None:
@@ -176,7 +194,7 @@ def argument_parser() -> argparse.ArgumentParser:
         "\t  login <username>\n"
         "\t  password <password>",
         formatter_class=argparse.RawTextHelpFormatter,
-        usage= "jira_tools.py action -p PROJECT [-j JIRA] [-w WEEKS]",
+        usage="jira_tools.py action -p PROJECT [-j JIRA] [-w WEEKS]",
         add_help=False
     )
 
