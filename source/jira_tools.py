@@ -64,7 +64,7 @@ def main() -> None:
         config = Config(args['project'], args['jira'], args['weeks'])
         action(config)
     else:
-        exit_script()
+        exit_script(parser)
     config.jira.close(parser)
 
 
@@ -185,7 +185,7 @@ def monte_carlo(config: Config) -> None:
         print(issue.key)
 
 
-def exit_script(parser: argparse.ArgumentParser):
+def exit_script(parser: argparse.ArgumentParser) -> None:
     print("\nError: Invalid action given\n")
     parser.print_help()
     exit(1)
