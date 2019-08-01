@@ -55,14 +55,17 @@ def main() -> None:
     """ main thread """
     parser = argument_parser()
     args = vars(parser.parse_args())
-    config = Config(args['project'], args['jira'], args['weeks'])
-
     print("Running jira-tools")
-    action = globals()[args['action']]
-
-    action(config)
-
-    config.jira.close()
+    try:
+        action = globals()[args['action']]
+    except KeyError:
+        exit_script(parser)
+    if callable(action):
+        config = Config(args['project'], args['jira'], args['weeks'])
+        action(config)
+    else:
+        exit_script()
+    config.jira.close(parser)
 
 
 def text(config: Config) -> None:
@@ -180,6 +183,12 @@ def monte_carlo(config: Config) -> None:
     )
     for issue in issues:
         print(issue.key)
+
+
+def exit_script(parser: argparse.ArgumentParser):
+    print("\nError: Invalid action given\n")
+    parser.print_help()
+    exit(1)
 
 
 def argument_parser() -> argparse.ArgumentParser:

@@ -1,4 +1,5 @@
 # jira-tools
+
 Useful CLI tool for interacting with JIRA instances through python
 
 ## Usage
@@ -16,7 +17,7 @@ machine <jirahost>
 ```
 
 ### Required Arguments
-    
+
 `action <issue_history | weekly_throughput >`
 
 | action | description |
@@ -31,7 +32,7 @@ machine <jirahost>
 
 `-h|--help` Print a help message and exit
 
-`-j|--jira <jira_url>` url of the JIRA instance to connect to, defaults to "http://localhost:2990/" which is the url used by the Development JIRA from the Atlassian SDK
+`-j|--jira <jira_url>` url of the JIRA instance to connect to, defaults to `http://localhost:2990/` which is the url used by the Development JIRA from the Atlassian SDK
 
 `-w|--weeks <weeks>` number of weeks to count back, defaults to four weeks
 
