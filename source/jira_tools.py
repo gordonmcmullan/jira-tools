@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Some useful Commandline tools to interact with JIRA instances
 """
