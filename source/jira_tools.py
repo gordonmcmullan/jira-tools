@@ -65,7 +65,7 @@ def main() -> None:
         action(config)
     else:
         exit_script(parser)
-    config.jira.close(parser)
+    config.jira.close()
 
 
 def text(config: Config) -> None:
