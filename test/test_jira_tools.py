@@ -1,7 +1,11 @@
-from jira_tools import jira_tools
+import jira_tools
+import sys
 
 import unittest
+
 from datetime import datetime, timezone
+
+from jira_tools.formatters import IssueHistory
 
 
 class NumberToText(unittest.TestCase):
@@ -25,6 +29,7 @@ class FormatIssue(unittest.TestCase):
     class TestIssue():
         key = "CIPI-2"
         fields = None
+        
 
 
     """         "\n",
@@ -37,10 +42,13 @@ class FormatIssue(unittest.TestCase):
     """
 
     def test_format_issue(self):
+            print(sys.path)
+
             test_issue = self.TestIssue()
             test_issue.fields = self.IssueFields()
             test_issue.fields.issuetype = self.TestIssuetype()
-            formatted_issue = jira_tools.format_issue(test_issue)
+            test_issue.fields.summary = "Test"
+            formatted_issue = IssueHistory.format_issue(test_issue)
             print(formatted_issue)
             self.assertIn("CIPI-2", formatted_issue)
             self.assertIn("01/01/2022 00:00", formatted_issue)
@@ -58,7 +66,7 @@ class FormatTransition(unittest.TestCase):
     def test_format_transition(self):
         timestamp = datetime(2022, 1, 1, 00, 00, 00, tzinfo=timezone.utc)
         test_transition = self.TestTransition()
-        formatted_transition = jira_tools.format_transition(test_transition, timestamp)
+        formatted_transition = IssueHistory.format_transition(test_transition, timestamp)
         self.assertIn("Selected for Development", formatted_transition)
         self.assertIn("01/01/2022 00:00", formatted_transition)
         self.assertIn("Status", formatted_transition)

@@ -13,6 +13,9 @@ class Colour:
     UNDERLINE = '\033[4m'
     END = '\033[0m'
 
+class Actions:
+    ALLOWED_ACTIONS = ["issue_history", "weekly_throughput", "text", "csv", "csv_all_issues", "csv_flagged"]
+
 def argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Provides some basic functionality to "
