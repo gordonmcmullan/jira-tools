@@ -5,7 +5,7 @@ Some useful Commandline tools to interact with JIRA instances
 import time
 from jira import JIRA
 
-from cli import argument_parser, Actions, Colour, exit_script
+from cli import Actions, Colour, argument_parser, exit_script
 from config import Config
 from actions import CSV, CsvAllIssues, CsvFlagged, IssueHistory
 
