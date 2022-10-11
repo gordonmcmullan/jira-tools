@@ -1,3 +1,4 @@
+from datetime import datetime
 import iso8601
 import filters
 
@@ -15,7 +16,7 @@ class IssueHistory():
     
 
     @staticmethod
-    def format_transition(transition: object, timestamp: str) -> str:
+    def format_transition(transition: object, timestamp: datetime) -> str:
         if transition.toString == "":  # toString is a property representing the Name of the status transitioned to
             title = "Unflagged"
         else:
@@ -28,7 +29,7 @@ class IssueHistory():
         formatted_issue += f"\n[Epic: {issue.fields.customfield_10008}]\n"
         formatted_issue += f"{issue.fields.issuetype.name} : "
         formatted_issue += f"{issue.key} {issue.fields.summary}\n"
-        formatted_issue += f"\t {iso8601.parse_date(issue.fields.created).strftime('%d/%m/%Y %H:%M')} Created"
+        formatted_issue += f"\t {iso8601.parse_date(issue.fields.created).strftime('%d/%m/%Y %H:%M')} Created\n"
 
         histories = issue.changelog.histories
         for history in histories:
