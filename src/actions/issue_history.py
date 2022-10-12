@@ -1,6 +1,7 @@
 from datetime import datetime
 import iso8601
 import filters
+from jira import Issue
 
 class IssueHistory():
 
@@ -24,7 +25,7 @@ class IssueHistory():
         return f"\t {timestamp.strftime('%d/%m/%Y %H:%M')} {title} {transition.toString}"
 
     @staticmethod
-    def format_issue(issue: object) -> str:
+    def format_issue(issue: Issue) -> str:
         formatted_issue = ""
         formatted_issue += f"\n[Epic: {issue.fields.customfield_10008}]\n"
         formatted_issue += f"{issue.fields.issuetype.name} : "
