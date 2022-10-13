@@ -1,3 +1,5 @@
+#pylint: disable=too-few-public-methods,missing-function-docstring,missing-module-docstring
+
 from jira import JIRA
 
 class Config:

@@ -1,20 +1,24 @@
+"""
+Format, as human readable text, completed issues for a specified Jira project
+"""
 from datetime import datetime
 import iso8601
-import filters
 from jira import Issue
+
+import filters
 
 class IssueHistory():
 
     FIELDS = "changelog, summary, created, status, issuetype, customfield_10008"
     EXPAND = "changelog"
 
+    @staticmethod
     def generate_jql(config):
         return  f"project={config.project} \
                 AND issuetype NOT IN (Epic) \
                 AND status IN (Done, Closed) \
                 AND status changed TO (Done, Closed) \
                 AFTER startOfWeek(-{config.weeks}w)"
-    
 
     @staticmethod
     def format_transition(transition: object, timestamp: datetime) -> str:
@@ -42,4 +46,3 @@ class IssueHistory():
                 formatted_issue += transition_string + "\n"
 
         return formatted_issue
-

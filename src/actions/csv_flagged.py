@@ -1,14 +1,24 @@
-import iso8601
-import filters
+"""output of flagged and Unflagged events in csv format for a specified Jira project"""
 from jira import Issue
+import iso8601
+
+import filters
 
 class CsvFlagged():
+    """
+    Class CsvFlagged
+    Functions and Constants used to select and format completed issues
+    which were flaged during their lifetime for a specified Jira project
+    """
     HEADER = "issueKey,issuedId,Summary,\"Epic Link\",flagged,unflagged"
 
     FIELDS = "changelog, created, summary, status, issuetype, customfield_10008"
     EXPAND = "changelog"
 
+
+    @staticmethod
     def generate_jql(config):
+        """Create the required JQL statement to seach for the required issues"""
         return  f"project={config.project} \
                 AND issuetype NOT IN (Epic) \
                 AND status IN (Done, Closed) \
@@ -18,7 +28,8 @@ class CsvFlagged():
 
 
     @staticmethod
-    def format_issue(issue: Issue)-> str:  
+    def format_issue(issue: Issue)-> str:
+        """format a signle issue into zero or more CSV lines where an issue was flagged and unflagged"""
         histories = issue.changelog.histories
         formatted_issue = ""
         for history in histories:

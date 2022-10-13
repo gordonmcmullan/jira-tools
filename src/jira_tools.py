@@ -5,17 +5,19 @@ Some useful Commandline tools to interact with JIRA instances
 import time
 from jira import JIRA
 
-from cli import Actions, Colour, argument_parser, exit_script
+from cli import Colour, argument_parser, exit_script
 from config import Config
 from actions import CSV, CsvAllIssues, CsvFlagged, IssueHistory
 
+ALLOWED_ACTIONS = ["issue_history", "weekly_throughput", "text", "csv", "csv_all_issues", "csv_flagged"]
+
+#pylint: disable=missing-function-docstring
 def main() -> None:
-    """ main thread """
     parser = argument_parser()
     args = vars(parser.parse_args())
-    if args['action'] not in Actions.ALLOWED_ACTIONS:
+    if args['action'] not in ALLOWED_ACTIONS:
         exit_script(parser)
-    try: # ToDo clean this up
+    try: # ToDo: clean this up
         action = globals()[args['action']]
     except KeyError:
         exit_script(parser)
@@ -71,8 +73,8 @@ def csv_all_issues(config: Config) -> None:
         jql = CsvAllIssues.generate_jql(config),
         fields=CsvAllIssues.FIELDS,
         expand = CsvAllIssues.EXPAND
-    )    
-    print(CsvAllIssues.HEADER)    
+    )
+    print(CsvAllIssues.HEADER)
     for issue in issues:
         print(CsvAllIssues.format_issue(issue))
 
@@ -86,7 +88,7 @@ def csv_flagged(config: Config) -> None:
     )
     print(CsvFlagged.HEADER)
     for issue in issues:
-        print(CsvFlagged.format_issue(issue), end="") 
+        print(CsvFlagged.format_issue(issue), end="")
 
 
 def issue_history(config: Config) -> None:
@@ -119,7 +121,7 @@ def weekly_throughput(config: Config) -> None:
     fields="summary"
     )
     print(f"Total stories {Colour.RED}Closed{Colour.END} to date: {issues.total}")
- 
+
     issues = jira.search_issues(
     f"project={config.project} \
         AND status in (Done, Closed) \

@@ -1,5 +1,7 @@
+"""Command line API handling for jira-tools"""
 import argparse
-
+import sys
+#pylint: disable=too-few-public-methods missing-function-docstring
 class Colour:
     """ Enumeration for modifying the colours used in the terminal output"""
     PURPLE = '\033[95m'
@@ -12,9 +14,6 @@ class Colour:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     END = '\033[0m'
-
-class Actions:
-    ALLOWED_ACTIONS = ["issue_history", "weekly_throughput", "text", "csv", "csv_all_issues", "csv_flagged"]
 
 def argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -84,4 +83,4 @@ def argument_parser() -> argparse.ArgumentParser:
 def exit_script(parser: argparse.ArgumentParser) -> None:
     print("\nError: Invalid action given\n")
     parser.print_help()
-    exit(1)
+    sys.exit(1)

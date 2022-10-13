@@ -1,51 +1,50 @@
-import unittest
+#pylint: disable=missing-module-docstring
 import sys
 import os
-
+import unittest
+from datetime import datetime
 from jira import Issue
 
-
+# fix paths so tests can be run from project root
 PROJECT_PATH = os.getcwd()
 SOURCE_PATH = os.path.join(
     PROJECT_PATH,"src"
 )
 sys.path.append(SOURCE_PATH)
+#pylint: disable=wrong-import-position
+from src.actions.issue_history import IssueHistory #pylint: disable=import-error
 
-from datetime import datetime, timezone
-from src.cli import Actions
-from src.actions.issue_history import IssueHistory
 
 class TestIssueHistory(unittest.TestCase):
 
     def test_transition_formatting(self):
         timestamp = datetime(2022, 1, 1, 00, 00, 00)
-        fromDict = {
+        raw_dict = {
             "toString" : "Done",
             "field" : "Status"
-        }    
-        testTransition = type(str('PropertyHolder'), (object,), fromDict)
+        }
+        testTransition = type(str('PropertyHolder'), (object,), raw_dict)
         # formatter String
         # f"\t {timestamp.strftime('%d/%m/%Y %H:%M')} {title} {transition.toString}"
-        self.assertEquals("\t 01/01/2022 00:00 Status Done", 
+        self.assertEqual("\t 01/01/2022 00:00 Status Done",
             IssueHistory.format_transition(testTransition, timestamp)
         )
 
 
     def test_unflagged(self):
         timestamp = datetime(2022, 1, 1, 00, 00, 00)
-        fromDict = {
+        raw_dict = {
             "toString" : "",
             "field" : "Flagged"
         }
         # Flagged type of transition with no "toString" property is an Unflag event
-        testTransition = type(str('PropertyHolder'), (object,), fromDict)
-        self.assertIn("Unflagged", 
+        testTransition = type(str('PropertyHolder'), (object,), raw_dict)
+        self.assertIn("Unflagged",
             IssueHistory.format_transition(testTransition, timestamp)
         )
 
     def test_format_issue(self):
-        
-        fromDict = { 
+        raw_dict = {
             "key" : "PROJECT-1",
             "id" : "00001",
             "fields" : {
@@ -56,12 +55,12 @@ class TestIssueHistory(unittest.TestCase):
                     "name" : "Issue"
                 }}, # fields
             "changelog" : {
-                "histories" : [{ 
+                "histories" : [{
                     "created" : "2022-01-02T00:00:00.000+00:00",
                     "items" : [
                     { "toString" : "In Progress",
                       "field" : "status" }]
-                },{ 
+                },{
                     "created" : "2022-01-03T00:00:00.000+00:00",
                     "items" : [
                     { "toString" : "Done",
@@ -70,7 +69,7 @@ class TestIssueHistory(unittest.TestCase):
             } # changelog
         } # fromDict
 
-        test_issue = Issue(options=None, session=None, raw=fromDict)
+        test_issue = Issue(options=None, session=None, raw=raw_dict)
         formatted_issue = IssueHistory.format_issue(test_issue)
         self.assertIn("\n[Epic: EPIC-1]\n", formatted_issue)
         self.assertIn("\nIssue : PROJECT-1 Issue Summary\n", formatted_issue)
