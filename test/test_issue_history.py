@@ -1,4 +1,4 @@
-#pylint: disable=missing-module-docstring
+# pylint: disable=missing-module-docstring
 import sys
 import os
 import unittest
@@ -11,8 +11,8 @@ SOURCE_PATH = os.path.join(
     PROJECT_PATH,"src"
 )
 sys.path.append(SOURCE_PATH)
-#pylint: disable=wrong-import-position
-from src.actions.issue_history import IssueHistory #pylint: disable=import-error
+# pylint: disable=wrong-import-position
+from src.actions.issue_history import IssueHistory # pylint: disable=import-error
 
 
 class TestIssueHistory(unittest.TestCase):

@@ -1,9 +1,9 @@
 """Command line API handling for jira-tools"""
 import argparse
 import sys
-#pylint: disable=too-few-public-methods missing-function-docstring
+# pylint: disable=too-few-public-methods missing-function-docstring
 class Colour:
-    """ Enumeration for modifying the colours used in the terminal output"""
+    #""" Enumeration for modifying the colours used in the terminal output"""
     PURPLE = '\033[95m'
     CYAN = '\033[96m'
     DARKCYAN = '\033[36m'

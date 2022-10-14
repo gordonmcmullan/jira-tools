@@ -1,4 +1,4 @@
-name: PyPython Unittest
+name: Lint with Pylint and Test with Python unittest
 
 on: [push]
 
@@ -17,7 +17,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install pylint
         pip install -r requirements.txt
-    - name: Runint tests with Python unittest
+    - name: Analysing the code with pylint
+      run: |
+        pylint $(git ls-files '*.py')
+    - name: Run unit tests with Python unittest
       run: |
         python3 -m unittest discover -s ./test -p "test_*.py"

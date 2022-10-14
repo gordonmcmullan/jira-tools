@@ -1,4 +1,4 @@
-#pylint: disable=missing-module-docstring
+# pylint: disable=missing-module-docstring
 import unittest
 import sys
 import os
@@ -10,7 +10,7 @@ SOURCE_PATH = os.path.join(
 )
 sys.path.append(SOURCE_PATH)
 
-from src.jira_tools import number_to_text #pylint: disable=import-error,wrong-import-position
+from src.jira_tools import number_to_text # pylint: disable=import-error,wrong-import-position
 
 class NumberToText(unittest.TestCase):
 

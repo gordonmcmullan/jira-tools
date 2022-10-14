@@ -1,4 +1,4 @@
-#pylint: disable=missing-function-docstring,missing-module-docstring
+# pylint: disable=missing-function-docstring,missing-module-docstring
 
 def is_transition(item) -> bool:
     return item.field.lower() in ["status", "flagged"]

@@ -11,7 +11,7 @@ from actions import CSV, CsvAllIssues, CsvFlagged, IssueHistory
 
 ALLOWED_ACTIONS = ["issue_history", "weekly_throughput", "text", "csv", "csv_all_issues", "csv_flagged"]
 
-#pylint: disable=missing-function-docstring
+# pylint: disable=missing-function-docstring
 def main() -> None:
     parser = argument_parser()
     args = vars(parser.parse_args())
