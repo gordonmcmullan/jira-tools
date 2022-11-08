@@ -28,7 +28,7 @@ def main() -> None:
         exit_script(parser)
     config.jira.close()
 
-#ToDo: Extract this
+# ToDo: Extract this
 def get_issues_by_jql(jira: JIRA, jql: str, fields: str, expand: str):
     start_at = 0
     has_more = True
@@ -101,7 +101,6 @@ def issue_history(config: Config) -> None:
     for issue in issues:
         print(IssueHistory.format_issue(issue))
 
-#ToDo Extract to actions
 def weekly_throughput(config: Config) -> None:
     jira = config.jira
 
@@ -142,11 +141,8 @@ def weekly_throughput(config: Config) -> None:
 
     print(f"weekly totals for the last {config.weeks} weeks")
     for week in range(0, config.weeks):
-        if week == 0:
-            preamble = "Last week "
-        else:
-            preamble = f"{number_to_text(week + 1).title()} weeks ago"
 
+        preamble = "Last week " if week == 0 else f"{number_to_text(week + 1).title()} weeks ago"
         issues = jira.search_issues(
             f"project={config.project} \
                 AND issuetype in (Story, Task) \

@@ -18,6 +18,7 @@ from src.actions.issue_history import IssueHistory # pylint: disable=import-erro
 class TestIssueHistory(unittest.TestCase):
 
     def test_transition_formatting(self):
+        """ Test that transitions are formatted as intended """
         timestamp = datetime(2022, 1, 1, 00, 00, 00)
         raw_dict = {
             "toString" : "Done",
@@ -32,6 +33,7 @@ class TestIssueHistory(unittest.TestCase):
 
 
     def test_unflagged(self):
+        """ Test that unflagged transitions, those of type Flagged without a toString property, are handled """
         timestamp = datetime(2022, 1, 1, 00, 00, 00)
         raw_dict = {
             "toString" : "",
@@ -44,6 +46,7 @@ class TestIssueHistory(unittest.TestCase):
         )
 
     def test_format_issue(self):
+        """ Test that Issues are formatted as intended """
         raw_dict = {
             "key" : "PROJECT-1",
             "id" : "00001",
