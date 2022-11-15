@@ -10,7 +10,7 @@ SOURCE_PATH = os.path.join(
 )
 sys.path.append(SOURCE_PATH)
 
-from src.jira_tools import number_to_text # pylint: disable=import-error,wrong-import-position
+from src.actions.weekly_throughput import WeeklyThroughput as WT # pylint: disable=import-error,wrong-import-position
 
 class NumberToText(unittest.TestCase):
 
@@ -18,7 +18,7 @@ class NumberToText(unittest.TestCase):
         text = ["zero", "one", "two", "three", "four", "five", "six",
                 "seven", "eight", "nine", "ten", "eleven", "twelve"]
         for number in range(1, 12):
-            self.assertEqual(number_to_text(number), text[number])
+            self.assertEqual(WT.number_to_text(number), text[number])
 
 
 if __name__ == "__main__":
