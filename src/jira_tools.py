@@ -7,7 +7,7 @@ from jira import JIRA
 
 from cli import Colour, argument_parser, exit_script
 from config import Config
-from actions import CSV, CsvAllIssues, CsvFlagged, IssueHistory
+from actions import CSV, CsvAllIssues, CsvFlagged, IssueHistory, WeeklyThroughput
 
 ALLOWED_ACTIONS = ["issue_history", "weekly_throughput", "text", "csv", "csv_all_issues", "csv_flagged"]
 
@@ -28,7 +28,6 @@ def main() -> None:
         exit_script(parser)
     config.jira.close()
 
-# ToDo: Extract this
 def get_issues_by_jql(jira: JIRA, jql: str, fields: str, expand: str):
     start_at = 0
     has_more = True
@@ -43,12 +42,6 @@ def get_issues_by_jql(jira: JIRA, jql: str, fields: str, expand: str):
         else:
             time.sleep(1)  # play nicely with API
 
-def number_to_text(number: int) -> str:
-    numbers = [
-        "zero", "one", "two", "three", "four", "five", "six", "seven",
-        "eight", "nine", "ten", "eleven", "twelve"
-    ]
-    return numbers[number]
 
 def text(config: Config) -> None:
     jira = config.jira
@@ -115,7 +108,7 @@ def weekly_throughput(config: Config) -> None:
 
     issues = jira.search_issues(
     f"project={config.project} \
-        AND status in (Done, Closed) \
+        AND status in (Closed) \
         AND issuetype in (Story, Task)",
     fields="summary"
     )
@@ -133,7 +126,7 @@ def weekly_throughput(config: Config) -> None:
     issues = jira.search_issues(
         f"project={config.project} \
             AND issuetype in (Story, Task) \
-            AND status = Done \
+            AND status in (Done, Closed) \
             AND resolutiondate >= startOfWeek()",
         fields="summary"
         )
@@ -141,17 +134,7 @@ def weekly_throughput(config: Config) -> None:
 
     print(f"weekly totals for the last {config.weeks} weeks")
     for week in range(0, config.weeks):
-
-        preamble = "Last week " if week == 0 else f"{number_to_text(week + 1).title()} weeks ago"
-        issues = jira.search_issues(
-            f"project={config.project} \
-                AND issuetype in (Story, Task) \
-                AND status in (Done, Closed) \
-                AND resolutionDate <  startOfWeek(-{week}w) \
-                AND resolutionDate >= startOfWeek(-{week + 1}w)",
-            fields="summary"
-        )
-        print(preamble, issues.total)
+        print (WeeklyThroughput.completed_for_week(config, jira, week))
 
 #ToDo: extract to actions and complete
 def monte_carlo(config: Config) -> None:
