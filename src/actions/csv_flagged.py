@@ -32,6 +32,7 @@ class CsvFlagged():
         """format a signle issue into zero or more CSV lines where an issue was flagged and unflagged"""
         histories = issue.changelog.histories
         formatted_issue = ""
+        flagged = False
         for history in histories:
             timestamp = iso8601.parse_date(history.created)
             flags = filter(filters.is_flag, history.items)
@@ -42,6 +43,10 @@ class CsvFlagged():
                     formatted_issue += f",\"{issue.fields.summary}\""
                     formatted_issue += f",{issue.fields.customfield_10008}"
                     formatted_issue += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
+                    flagged = True
                 else:
                     formatted_issue += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\"\n"
+                    flagged = False
+        if flagged:
+            formatted_issue += "\n"
         return formatted_issue
