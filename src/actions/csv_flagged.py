@@ -48,5 +48,6 @@ class CsvFlagged():
                     formatted_issue += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\"\n"
                     flagged = False
         if flagged:
-            formatted_issue += "\n"
+            donetime = iso8601.parse_date(history.created)
+            formatted_issue += f",\"{donetime.strftime('%d/%m/%Y %H:%M')}\"\n"
         return formatted_issue
