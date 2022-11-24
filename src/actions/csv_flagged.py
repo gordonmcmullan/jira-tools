@@ -1,7 +1,8 @@
 """output of flagged and Unflagged events in csv format for a specified Jira project"""
+from datetime import datetime
+
 from jira import Issue
 import iso8601
-
 import filters
 
 class CsvFlagged():
@@ -33,6 +34,8 @@ class CsvFlagged():
         histories = issue.changelog.histories
         formatted_issue = ""
         flagged = False
+        donetime =  datetime.now()
+        history = { "created": donetime }
         for history in histories:
             timestamp = iso8601.parse_date(history.created)
             flags = filter(filters.is_flag, history.items)
