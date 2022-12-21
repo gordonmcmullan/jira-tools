@@ -61,10 +61,19 @@ class TestCsvDone(unittest.TestCase):
 
         test_issue = Issue(options=None, session=None, raw=raw_dict)
         formatted_issue = CsvDone.format_issue(test_issue)
-        test_line = "PROJECT-1,"                # issueKey
-        test_line += "EPIC-1,"                  # Epic Link
+        test_line = "Issue,"                    # issue type
+        test_line += "PROJECT-1,"                # issue Key
+        test_line += "00001,"                    # issue id
         test_line += "\"Issue Summary\","       # Issue Summary
+        test_line += "\"assignee.name\","       # Asignee
+        test_line += "\"reporter.name\","       # reporter
+        test_line += "\"standard\","            # priority
+        test_line += "\"Closed\","              # status
+        test_line += "\"Done\","                # resolution
         test_line += "\"01/01/2022 00:00\","    # Created
+        test_line += "\"04/01/2022 00:00\","    # updated
+        test_line += "EPIC-1,"                  # Epic Link
+        test_line += "\"=NETWORKDAYS(Nx,Ox)\"," # Formula placeholder
         test_line += "\"02/01/2022 00:00\","    # started (moved to 'In Progress')
         test_line += "\"03/01/2022 00:00\""     # completed (moved to 'Done')
         self.assertEqual(test_line, formatted_issue)
