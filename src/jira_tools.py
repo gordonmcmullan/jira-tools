@@ -7,9 +7,9 @@ from jira import JIRA
 
 from cli import Colour, argument_parser, exit_script
 from config import Config
-from actions import CSV, CsvAllIssues, CsvFlagged, IssueHistory, WeeklyThroughput
+from actions import CSV, CsvAllIssues, CsvDone, CsvFlagged, IssueHistory, WeeklyThroughput
 
-ALLOWED_ACTIONS = ["issue_history", "weekly_throughput", "text", "csv", "csv_all_issues", "csv_flagged"]
+ALLOWED_ACTIONS = ["issue_history", "weekly_throughput", "text", "csv", "csv_all_issues", "csv_done", "csv_flagged"]
 
 # pylint: disable=missing-function-docstring
 def main() -> None:
@@ -70,6 +70,17 @@ def csv_all_issues(config: Config) -> None:
     print(CsvAllIssues.HEADER)
     for issue in issues:
         print(CsvAllIssues.format_issue(issue))
+
+def csv_done(config: Config) -> None:
+    issues = get_issues_by_jql(
+        jira = config.jira,
+        jql = CsvDone.generate_jql(config),
+        fields = CsvDone.FIELDS,
+        expand = CsvDone.EXPAND
+    )
+    print(CsvDone.HEADER)
+    for issue in issues:
+        print(CsvDone.format_issue(issue))
 
 
 def csv_flagged(config: Config) -> None:
