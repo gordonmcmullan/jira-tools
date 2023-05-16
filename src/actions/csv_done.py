@@ -59,13 +59,17 @@ class CsvDone():
                 if filters.is_complete(transition):
                     if transition.toString.lower == "done":
                         done_time = ""
-                        if not start_found: done_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
-                        done_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
+                        if not start_found:
+                            done_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
+                        else:
+                            done_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
                         start_found = True
                     else:
                         closed_time = ""
-                        if not start_found: closed_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
-                        closed_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
+                        if not start_found:
+                            closed_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
+                        else:
+                            closed_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
         if done_time:
             formatted_issue += done_time
         else:
