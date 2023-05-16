@@ -7,7 +7,7 @@ def is_flag(item) -> bool:
     return item.field.lower() == "flagged"
 
 def is_in_progress(item) -> bool:
-    return item.toString is not None and item.toString.lower() == "in progress"
+    return item.toString is not None and item.toString.lower() in ["in progress", "in review", "in qa"]
 
 def is_complete(item) -> bool:
     return item.toString is not None and item.toString.lower() in ["done", "closed"]

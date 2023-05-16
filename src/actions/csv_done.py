@@ -16,6 +16,7 @@ class CsvDone():
     FIELDS = "changelog, issuetype, issuekey, id, summary, assignee, reporter, priority, status, resolution, created, updated, customfield_10008"
     EXPAND = "changelog"
 
+
     @staticmethod
     def generate_jql(config):
         return  f"project={config.project} \
@@ -25,7 +26,7 @@ class CsvDone():
                 AFTER startOfWeek(-{config.weeks}w)"
 
     @staticmethod
-    def format_issue(issue: Issue)-> str:
+    def format_issue(issue: Issue, row: int)-> str:
         "Format an individual issue as a series of lines of csv"
         formatted_issue = ""
         formatted_issue += f"{issue.fields.issuetype.name}"
@@ -40,7 +41,7 @@ class CsvDone():
         formatted_issue += f",\"{parse_date(issue.fields.created).strftime('%d/%m/%Y %H:%M')}\""
         formatted_issue += f",\"{parse_date(issue.fields.updated).strftime('%d/%m/%Y %H:%M')}\""
         formatted_issue += f",{issue.fields.customfield_10008}"
-        formatted_issue += ",\"=NETWORKDAYS(Nx,Ox)\""
+        formatted_issue += f",\"=NETWORKDAYS(N{row},O{row})\""
 
 
         histories = issue.changelog.histories
@@ -56,14 +57,15 @@ class CsvDone():
                     formatted_issue += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
                     start_found = True
                 if filters.is_complete(transition):
-                    if start_found is False:
-                        formatted_issue += ","
-                        # include only one 'missing' to "In Progress" timestamp
-                        start_found = True
                     if transition.toString.lower == "done":
-                        done_time = f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
+                        done_time = ""
+                        if not start_found: done_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
+                        done_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
+                        start_found = True
                     else:
-                        closed_time = f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
+                        closed_time = ""
+                        if not start_found: closed_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
+                        closed_time += f",\"{timestamp.strftime('%d/%m/%Y %H:%M')}\""
         if done_time:
             formatted_issue += done_time
         else:

@@ -79,8 +79,10 @@ def csv_done(config: Config) -> None:
         expand = CsvDone.EXPAND
     )
     print(CsvDone.HEADER)
+    row = 2
     for issue in issues:
-        print(CsvDone.format_issue(issue))
+        print(CsvDone.format_issue(issue=issue, row=row))
+        row += 1
 
 
 def csv_flagged(config: Config) -> None:

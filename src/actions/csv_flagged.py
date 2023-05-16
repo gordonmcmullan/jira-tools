@@ -23,8 +23,9 @@ class CsvFlagged():
         return  f"project={config.project} \
                 AND issuetype NOT IN (Epic) \
                 AND status IN (Done, Closed) \
-                AND status changed TO (Done, Closed) \
+                AND status CHANGED TO (Done) \
                 AFTER startOfWeek(-{config.weeks}w) \
+                AND status CHANGED TO (Done) BEFORE startOfWeek() \
                 ORDER by issueKey ASC"
 
 
